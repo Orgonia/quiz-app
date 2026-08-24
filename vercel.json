@@ -12,15 +12,15 @@
       "dest": "server.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/public/$1"
+      "src": "/style.css",
+      "dest": "/public/style.css"
     },
     {
-      "handle": "filesystem"
+      "src": "/img/(.*)",
+      "dest": "/public/img/$1"
     },
     {
       "src": "/(.*)",
-      "status": 200,
       "dest": "/public/index.html"
     }
   ]
