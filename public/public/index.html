@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tigerznuet Testing Platform</title>
+    <link rel="stylesheet" href="style.css">
+
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1678513749911698');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1678513749911698&ev=PageView&noscript=1"/></noscript>
+    <!-- End Meta Pixel Code -->
+
+    
+</head>
+<body>
+
+<div class="layout-container">
+
+
+    <div class="top-bar">
+        <div class="logo">
+            <img src="img/logo.png" alt="Tigerznuet Logo">
+            <span>Tigerznuet</span>
+        </div>
+        <div id="user-display"></div>
+    </div>
+
+
+    <div id="auth-block" class="card">
+        <h2 class="reg-title">Candidate Registration</h2>
+        <p class="reg-desc">Please provide your current details to open access to the test.</p>
+        <form id="reg-form" class="form-grid">
+            <div class="form-group">
+                <label>First and Last Name</label>
+                <input type="text" id="userName" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="userEmail" required placeholder="example@mail.com">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="userPhone" required placeholder="+7 (707) 123-4567">
+            </div>
+
+            <div class="privacy-agreement-container">
+                <label class="privacy-label">
+                    <input type="checkbox" id="privacyAgree" required class="privacy-checkbox">
+                    <span class="checkbox-custom"></span>
+                    <span class="privacy-text">
+                        I agree to the <a href="#" id="open-privacy-btn" class="privacy-link">privacy policy</a>
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: fit-content;">Start Testing</button>
+        </form>
+    </div>
+
+
+    <div id="quiz-block" class="quiz-workspace hidden">
+        
+
+        <div class="questions-list-scroll" id="questions-scroll-box"></div>
+
+
+        <div class="bottom-actions-bar">
+            <button type="button" id="btn-bottom-finish" class="btn btn-primary btn-large">Finish Test</button>
+        </div>
+
+
+        <button type="button" id="toggle-map-btn" class="qmap-toggle-button">📋 Question Map</button>
+
+
+        <div id="question-map-sidebar" class="qmap-sidebar closed">
+            <div class="qmap-header">
+                <div class="grid-title">Question Map</div>
+                <button type="button" id="close-map-sidebar" class="close-sidebar-btn">&times;</button>
+            </div>
+            <div class="qmap-grid-container">
+                <div id="cubes-grid" class="cubes-container"></div>
+                <button type="button" id="btn-open-confirm" class="btn btn-success">Finish Test</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="final-block" class="card hidden">
+        <div class="success-screen">
+            <div class="success-icon">✓</div>
+            <h2 style="margin: 0 0 8px 0;">Excellent job!</h2>
+            <p style="margin: 0; color: var(--text-muted); font-size: 15px;">You have successfully submitted your answers. Our specialists will contact you.</p>
+        </div>
+    </div>
+
+</div>
+
+<div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3>Confirm Submission</h3>
+        <p id="modal-warning-text">You are about to complete the testing process.</p>
+        <div class="modal-buttons">
+            <button type="button" id="btn-modal-cancel" class="btn btn-outline">Back to Test</button>
+            <button type="button" id="btn-modal-submit" class="btn btn-primary">Yes, Submit All</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="privacy-modal" class="privacy-modal-backdrop hidden">
+    <div class="privacy-modal-window">
+        <div class="privacy-modal-header">
+            <div class="lang-switcher">
+                <button type="button" class="lang-btn active" data-lang="ru">RU</button>
+                <button type="button" class="lang-btn" data-lang="kz">KZ</button>
+                <button type="button" class="lang-btn" data-lang="en">EN</button>
+            </div>
+            <button type="button" id="close-privacy-btn" class="privacy-modal-close">&times;</button>
+        </div>
+        
+        <div class="privacy-modal-body">
+            <div class="brand-tag">TIGERZ NUET</div>
+            
+            <div class="lang-content" id="content-ru">
+                <h1>Политика конфиденциальности</h1>
+                <p class="subtitle">Как TigerZnuet собирает, использует, хранит и защищает персональные данные.</p>
+                <p class="policy-date">Обновлено: 26 июня 2026 года</p>
+                <h2>Кто мы</h2>
+                <p>TigerZnuet — образовательная платформа для подготовки к NUET, пробных экзаменов, практических заданий, отслеживания прогресса и поддержки учеников.</p>
+                <h2>Какие данные мы собираем</h2>
+                <p>Мы можем собирать данные аккаунта: имя, email, username, информацию провайдера авторизации и роль пользователя.</p>
+                <p>Мы можем собирать учебные данные: назначенные mock-экзамены, ответы, баллы, прогресс, данные профиля и активность в рабочем кабинете.</p>
+                <p>Когда вы связываетесь с нами, мы можем обрабатывать контактные данные и содержание сообщений, которые вы отправляете по телефону, email, Telegram, WhatsApp или другим каналам.</p>
+                <h2>Как мы используем данные</h2>
+                <p>Мы используем персональные данные, чтобы создавать аккаунты, предоставлять доступ к платформе, проводить mock-экзамены, показывать прогресс, поддерживать учеников, улучшать занятия и связываться по вопросам курса.</p>
+                <p>Также мы используем данные для защиты платформы, предотвращения злоупотреблений, исправления технических ошибок и выполнения законных требований.</p>
+                <h2>Cookies и аналитика</h2>
+                <p>Мы используем cookies и похожие технологии для авторизации, безопасности сессии, языковых настроек и базовой продуктовой аналитики.</p>
+                <p>Вы можете управлять cookies в настройках браузера, но без обязательных cookies часть функций платформы может работать некорректно.</p>
+                <h2>Передача данных</h2>
+                <p>Мы не продаем персональные данные.</p>
+                <p>Мы можем передавать данные сервисным провайдерам, которые помогают нам поддерживать платформу: хостинг, авторизация, база данных, аналитика и коммуникационные инструменты. Такие провайдеры могут обрабатывать данные только в объеме, необходимом для оказания услуг.</p>
+                <h2>Срок хранения</h2>
+                <p>Мы храним персональные данные, пока аккаунт активен или пока данные нужны для предоставления курса, поддержки учеников, решения споров, обеспечения безопасности или выполнения законных требований.</p>
+                <h2>Ваши права</h2>
+                <p>Вы можете запросить доступ, исправление, удаление или ограничение обработки персональных данных с учетом проверки личности и применимого законодательства.</p>
+                <p>Чтобы отправить запрос, свяжитесь с нами через контакты, указанные на сайте.</p>
+                <h2>Дети и ученики</h2>
+                <p>Платформа предназначена для учеников, готовящихся к NUET. Если родитель или законный представитель считает, что данные ученика нужно исправить или удалить, он может связаться с нами.</p>
+                <h2>Изменения политики</h2>
+                <p>Мы можем обновлять эту Политику конфиденциальности при изменении платформы, требований закона или наших практик обработки данных. Актуальная версия публикуется на этой странице.</p>
+            </div>
+
+            <div class="lang-content hidden" id="content-kz">
+                <h1>Құпиялылық саясаты</h1>
+                <p class="subtitle">TigerZnuet жеке деректерді қалай жинайды, пайдаланады, сақтайды және қорғайды.</p>
+                <p class="policy-date">Жаңартылған күні: 2026 жылғы 26 маусым</p>
+                <h2>Біз кімбіз</h2>
+                <p>TigerZnuet — NUET-ке дайындық, сынақ емтихандары, практикалық тапсырмалар, оқу прогресі және оқушыларды қолдау үшін жасалған білім беру платформасы.</p>
+                <h2>Қандай деректер жинаймыз</h2>
+                <p>Біз аккаунт деректерін жинауымыз мүмким: аты-жөні, email, username, авторизация провайдері туралы ақпарат және пайдаланушы рөлі.</p>
+                <p>Біз оқу деректерін жинауымыз мүмкін: тағайындалған mock емтихандар, жауаптар, баллдар, прогресс, профиль деректері және жұмыс кабинетіндегі белсенділік.</p>
+                <p>Сіз бізбен байланысқанда, телефон, email, Telegram, WhatsApp немесе басқа арналар арқылы жіберген байланыс деректері мен хабарлама мазмұнын өңдеуіміз мүмкін.</p>
+                <h2>Деректерді қалай пайдаланамыз</h2>
+                <p>Біз жеке деректерді аккаунт ашу, платформаға қолжетімділік беру, mock емтихандар өткізу, прогресті көрсету, оқушыларды қолдау, сабақтарды жақсарту және курс бойынша байланысу үшін пайдаланамыз.</p>
+                <p>Сондай-ақ деректерді платформаны қорғау, теріс пайдаланудың алдын алу, техникалық мәселелерді түзету және заң талаптарын орындау үшін пайдаланамыз.</p>
+                <h2>Cookies және аналитика</h2>
+                <p>Біз авторизация, сессия қауіпсіздігі, тіл баптаулары және базалық өнім аналитикасы үшін cookies және ұқсас технологияларды қолданамыз.</p>
+                <p>Cookies баптауларын браузерде басқара аласыз, бірақ міндетті cookies өшірілсе, платформаның кейбір функциялары дұрыс жұмыс істемеуі мүмкін.</p>
+                <h2>Деректерді бөлісу</h2>
+                <p>Біз жеке деректерді сатпаймыз.</p>
+                <p>Платформаны жүргізуге көмектесетін сервис провайдерлерімен деректерді бөлісуіміз мүмкін: хостинг, авторизация, дерекқор, аналитика және байланыс құралдары. Мұндай провайдерлер деректерді тек өз қызметін көрсетуге қажет көлемде өңдеуге құқылы.</p>
+                <h2>Сақтау мерзімі</h2>
+                <p>Біз жеке деректерді аккаунт белсенді болғанда немесе курс ұсыну, оқушыларды қолдау, дауларды шешу, қауіпсіздікті сақтау немесе заң талаптарын орындау үшін қажет болғанша сақтаймыз.</p>
+                <h2>Сіздің құқықтарыңыз</h2>
+                <p>Сіз жеке деректерді алу, түзету, жою немесе өңдеуді шектеу туралы сұрау жібере аласыз. Бұл жеке басты растауға және қолданылатын заңға байланысты орындалады.</p>
+                <p>Сұрау жіберу үшін сайтта көрсетілген байланыс арналары арқылы бізге хабарласыңыз.</p>
+                <h2>Балалар және оқушылар</h2>
+                <p>Платформа NUET-ке дайындалатын оқушыларға арналған. Егер ата-ана немесе заңды өкіл оқушы деректерін түзету немесе жою қажет деп санаса, бізбен байланыса алады.</p>
+                <h2>Саясаттағы өзгерістер</h2>
+                <p>Платформа, заң талаптары немесе деректерді өңдеу тәжірибеміз өзгерсе, осы Құпиялылық саясатын жаңартуымыз мүмкін. Өзекті нұсқа осы бетте жарияланады.</p>
+            </div>
+
+            <div class="lang-content hidden" id="content-en">
+                <h1>Privacy Policy</h1>
+                <p class="subtitle">How TigerZnuet collects, uses, stores, and protects personal data.</p>
+                <p class="policy-date">Last updated: June 26, 2026</p>
+                <h2>Who we are</h2>
+                <p>TigerZnuet is an educational platform for NUET preparation, mock exams, practice questions, learning progress, and student support.</p>
+                <h2>Data we collect</h2>
+                <p>We may collect account details such as name, email address, username, authentication provider information, and role.</p>
+                <p>We may collect learning data such as assigned mock exams, answers, scores, progress, profile information, and dashboard activity.</p>
+                <p>When you contact us, we may collect the contact details and message content you provide through phone, email, Telegram, WhatsApp, or other channels.</p>
+                <h2>How we use data</h2>
+                <p>We use personal data to create accounts, provide access to the platform, run mock exams, show progress, support students, improve lessons, and communicate about the course.</p>
+                <p>Also we use data to protect the platform, prevent misuse, debug technical issues, and comply with legal obligations.</p>
+                <h2>Cookies and analytics</h2>
+                <p>We use cookies and similar technologies for authentication, session security, language preferences, and basic product analytics.</p>
+                <p>You can control cookies in your browser settings, but some platform features may not work correctly without essential cookies.</p>
+                <h2>Sharing data</h2>
+                <p>We do not sell personal data.</p>
+                <p>We may share data with service providers that help us operate the platform, such as hosting, authentication, database, analytics, and communication tools. These providers may process data only as needed to provide their services.</p>
+                <h2>Data retention</h2>
+                <p>We keep personal data while your account is active or while it is needed to provide the course, support students, resolve disputes, maintain security, or meet legal requirements.</p>
+                <h2>Your rights</h2>
+                <p>You may request access, correction, deletion, or limitation of your personal data, subject to identity verification and applicable law.</p>
+                <p>To make a request, contact us through the contact details listed on the website.</p>
+                <h2>Children and students</h2>
+                <p>The platform is intended for students preparing for NUET. If a parent or guardian believes a student’s data should be corrected or removed, they can contact us.</p>
+                <h2>Changes to this policy</h2>
+                <p>We may update this Privacy Policy when the platform, legal requirements, or our data practices change. The updated version will be posted on this page.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Вопросовы
+    const questions = [
+        { 
+            id: 1, 
+            theme: "Critical Thinking", 
+            text: "Many cities are rushing to build extensive network infrastructures for automated self-driving public shuttles. While proponents argue that this will significantly reduce urban gridlock, historical data on traffic psychology shows that whenever public transit becomes highly streamlined, it paradoxчески increases outer-suburban sprawl. As commuting becomes more effortless, individuals comfortably relocate further away from urban centers, which ultimately introduces a massive influx of private vehicles into city peripheries over time. Therefore, municipalities must halt immediate investments in automated transit infrastructure until robust dynamic outer-boundary zoning laws are firmly established.\n\nWhich one of the following best expresses the main conclusion of the above argument?", 
+            options: [
+                "A) Automated self-driving public shuttles will not succeed in significantly reducing urban traffic gridlock.", 
+                "B) Streamlined public transit networks invariably encourage commuters to relocate to outer-suburban regions.", 
+                "C) Municipalities ought to delay funding automated transit infrastructures until dynamic outer-boundary zoning regulations are enacted.", 
+                "D) Urban traffic psychology demonstrates that technological enhancements alone cannot fix structural metropolitan congestion.", 
+                "E) The continuous expansion of suburban sprawl inevitably causes an influx of private vehicular traffic into municipal centers."
+            ] 
+        },
+        { 
+            id: 2, 
+            theme: "Critical Thinking", 
+            text: "The plan of a domestic lawn with dimensions in metres is shown below.<br><img src='img/2.png' class='question-image' alt='Lawn Diagram'><br>The lawn area is to be reseeded. Seed must be applied at the rate of 50 grams per square metre.<br>Appropriate grass seed is available only in the following quantities and prices:<br><img src='img/2.1.png' width='40%' class='question-image' alt='Lawn Diagram'><br>What is the least amount of money that needs to be spent to buy sufficient seed to reseed the lawn?", 
+            options: [
+                "A) £16.50", 
+                "B) £13.50", 
+                "C) £14.00", 
+                "D) £16.00", 
+                "E) £22.00"
+            ] 
+        },
+        { 
+            id: 3, 
+            theme: "Critical Thinking", 
+            text: "A 300g packet of Scottish oatcakes has the following information on the side of the packet:<br><img src='img/3.png' class='question-image' alt='Oatcakes Diagram'><br>How many oatcakes are there in the packet?", 
+            options: [
+                "A) 23", 
+                "B) 24", 
+                "C) 18", 
+                "D) 29", 
+                "E) 21"
+            ] 
+        },
+        { 
+            id: 4, 
+            theme: "Critical Thinking", 
+            text: "The traditional school grading scale, which awards points from 0 to 100, induces counterproductive anxiety in students. Educators should replace it with a binary 'Pass/No Pass' framework. Eliminating numerical distinctions removes the constant pressure to outrank peers, thereby shifting student attention away from grade accumulation and back onto pure academic curiosity. Therefore, switching to this binary system will inherently elevate the deep, long-term conceptual understanding that students acquire during their studies.\n\nWhich one of the following is an underlying assumption of the argument above?", 
+            options: [
+                "A) Students currently earning top marks under the 100-point scale will maintain their high performance in a binary framework.", 
+                "B) High levels of academic anxiety directly hinder a student's capacity to develop deep conceptual understanding.", 
+                "C) Academic curiosity cannot coexist with any form of structured external evaluation or competitive benchmarking.", 
+                "D) Employers and universities are willing to accept academic transcripts that do not display granular numerical distinctions.", 
+                "E) Transitioning to a binary grading scheme requires substantial structural retraining for existing teaching faculty."
+            ] 
+        },
+        { 
+            id: 5, 
+            theme: "Critical Thinking", 
+            text: "Psychologists monitored two distinct groups of corporate executives over a five-year period. Group Alpha participated in mandatory thirty-minute mindfulness meditation sessions every morning, while Group Beta did not alter their morning routines. At the end of the study, the incidence of clinical burnout symptoms in Group Alpha was 65% lower than in Group Beta. However, long-term cognitive tests revealed that the decision-making response speed under high-stress scenarios was significantly slower in Group Alpha members compared to their counterparts in Group Beta.\n\nWhich one of the following is a conclusion that can reliably be drawn from the above passage?", 
+            options: [
+                "A) Corporate executives who show low levels of burnout are naturally less effective at high-speed decision making.", 
+                "B) Morning mindfulness meditation practices can carry cognitive trade-offs alongside their psychological benefits.", 
+                "C) Group Beta executives would have improved their stress response metrics if they had adopted meditation practices.", 
+                "D) High-stress scenarios demand a faster decision-making speed than what relaxed executives can realistically offer.", 
+                "E) Practicing mindfulness meditation is the single most effective intervention against severe executive workplace burnout."
+            ] 
+        },
+        { 
+            id: 6, 
+            theme: "Critical Thinking", 
+            text: "A small school library recorded the number of books returned and taken out each day during one week.<br><img src='img/6.png' class='question-image' alt='Library Bar Chart'><br>Which one of these graphs, if suitable labelled, could show the total number of books present in the library at the end of each day during the week?", 
+            options: [
+                "A) <img src='img/6.1.png' class='question-image' alt='Graph A'>", 
+                "B) <img src='img/6.2.png' class='question-image' alt='Graph B'>", 
+                "C) <img src='img/6.3.png' class='question-image' alt='Graph C'>", 
+                "D) <img src='img/6.4.png' class='question-image' alt='Graph D'>"
+            ] 
+        },
+        { 
+            id: 7, 
+            theme: "Critical Thinking", 
+            text: "To combat declining student concentration spans, Oakridge Academy introduced ergonomics desk-bikes that allow students to continuously pedal while listening to lectures. After one semester, the school reported a 20% average increase in final mathematics exam scores across all participating classrooms. The administration concluded that the low-intensity physical exertion from pedaling directly boosts neurological focus and cognitive retention during complex academic instruction.\n\nWhich one of the following, if true, would most weaken the above argument?", 
+            options: [
+                "A) Several students reported mild physical fatigue in their leg muscles during the first two weeks of adopting the desk-bikes.", 
+                "B) Simultaneous with the introduction of the desk-bikes, Oakridge Academy implemented a mandatory ban on smartphones inside classrooms.", 
+                "C) A similar study conducted at a nearby university showed that desk-bikes had no measurable impact on history essay grades.", 
+                "D) The desk-bikes cost significantly more to purchase and maintain than standard static wooden school furniture.", 
+                "E) Students who did not participate in the desk-bike program showed a 5% increase in their mathematics scores due to normal curriculum adjustments."
+            ] 
+        },
+        { 
+            id: 8, 
+            theme: "Critical Thinking", 
+            text: "A train is travelling at 30 mph towards a terminus which is 120 miles away. At the same time, a pigeon starts flying from the terminus towards the train. When it meets the train, it turns and flies back towards the terminus and, when it arrives there, it turns and flies back towards the train again. The pigeon flies at an average speed of 40 mph. The pigeon continues to do this until the train reaches the terminus.\n\nAssuming that no time was lost in each turnaround, how far (to the nearest 10 miles) does the pigeon fly altogether?", 
+            options: [
+                "A) 160 miles", 
+                "B) 180 miles", 
+                "C) 240 miles", 
+                "D) 140 miles", 
+                "E) 120 miles"
+            ] 
+        },
+        { 
+            id: 9, 
+            theme: "Critical Thinking", 
+            text: "An analysis of major tech startups over the past ten years reveals a striking trend: 85% of founders who successfully took their companies public practiced an intensive form of extreme wilderness endurance training in their youth. This proves that pushing one's physical limits in unpredictable natural settings is an excellent method for instilling the exact psychological resilience needed to navigate high-stakes corporate financial landscapes. Therefore, young aspiring entrepreneurs should enroll in wilderness endurance courses to secure business success.\n\nWhich one of the following is the best statement of the flaw in the argument above?", 
+            options: [
+                "A) It fails to consider that wilderness training may expose young participants to severe physical injuries or hazards.", 
+                "B) It overlooks the possibility that individuals who already possess high innate resilience are naturally drawn to both wilderness training and corporate founding.", 
+                "C) It ignores the fact that 15% of successful tech founders managed to take their companies public without any wilderness background.", 
+                "D) It presupposes that psychological resilience is the only character trait required to successfully manage a startup.", 
+                "E) It relies on a sample size that is exclusively limited to the technology sector rather than general business fields."
+            ] 
+        },
+        { 
+            id: 10, 
+            theme: "Critical Thinking", 
+            text: "Clare, Marie and Sheila have birthdays on the 10th, 20th and 30th of March. This year none of their birthdays occurs at a weekend.\n\nWhich day of the week cannot be any of the three birthdays?", 
+            options: [
+                "A) Monday", 
+                "B) Tuesday", 
+                "C) Wednesday", 
+                "D) Thursday"
+            ] 
+        },
+        { 
+            id: 11, 
+            theme: "Mathematics", 
+            text: "Make b the subject of the formula: <img src='img/11.png' class='question-image' alt='Formula Diagram'><br>Which of the following is correct?", 
+            options: [
+                "A) <img src='img/11.1.png' class='question-image' alt='Option A'>", 
+                "B) <img src='img/11.2.png' class='question-image' alt='Option B'>", 
+                "C) <img src='img/11.3.png' class='question-image' alt='Option C'>", 
+                "D) <img src='img/11.4.png' class='question-image' alt='Option D'>", 
+                "E) <img src='img/11.5.png' class='question-image' alt='Option E'>", 
+                "F) <img src='img/11.6.png' class='question-image' alt='Option F'>"
+            ] 
+        },
+        { 
+            id: 12, 
+            theme: "Mathematics", 
+            text: "The line joining the points with coordinates (p, p - 1) and (1 - p, 2p) is parallel to the line with equation 2x + 3y + 1 = 0.\n\nWhat is the value of p?", 
+            options: [
+                "A) -1", 
+                "B) -1/7", 
+                "C) 1/9", 
+                "D) 1/8", 
+                "E) 1", 
+                "F) 5/4", 
+                "G) 2", 
+                "H) 5"
+            ] 
+        },
+        { 
+            id: 13, 
+            theme: "Mathematics", 
+            text: "The point A is 4 km due East of the point B. The bearing of the point C from A is 330° and the bearing of C from B is 60°.\n\nFind the distance BC.", 
+            options: [
+                "A) 2 km", 
+                "B) 2√3 km", 
+                "C) 4 km", 
+                "D) 2√5 km", 
+                "E) 4√2 km"
+            ] 
+        },
+        { 
+            id: 14, 
+            theme: "Mathematics", 
+            text: "Which one of the following is a simplification of: <img src='img/14.png' class='question-image' alt='Formula Diagram'>", 
+            options: [
+                "A) <img src='img/14.1.png' class='question-image' alt='Option A'>", 
+                "B) <img src='img/14.2.png' class='question-image' alt='Option B'>", 
+                "C) <img src='img/14.3.png' class='question-image' alt='Option C'>", 
+                "D) <img src='img/14.4.png' class='question-image' alt='Option D'>", 
+                "E) <img src='img/14.5.png' class='question-image' alt='Option E'>", 
+                "F) <img src='img/14.6.png' class='question-image' alt='Option F'>"
+            ] 
+        },
+        { 
+            id: 15, 
+            theme: "Mathematics", 
+            text: "The sum of the two values of x that satisfy the simultaneous equations x - 3y + 1 = 0 and 3x² - 7xy = 5 is:", 
+            options: [
+                "A) -8.5", 
+                "B) -7.5", 
+                "C) -1.5", 
+                "D) 3.5", 
+                "E) 4.5", 
+                "F) 5"
+            ] 
+        },
+        { 
+            id: 16, 
+            theme: "Mathematics", 
+            text: "A right-angled triangle has sides of length x + 4, 2x + 2, and hypotenuse 3x (all in cm).<br><img src='img/16.png' class='question-image' alt='Triangle Diagram'><br>What is the area, in cm², of the triangle?", 
+            options: [
+                "A) 10", 
+                "B) 12", 
+                "C) 28", 
+                "D) 36", 
+                "E) 40", 
+                "F) 54", 
+                "G) 70"
+            ] 
+        },
+        { 
+            id: 17, 
+            theme: "Mathematics", 
+            text: "The interior angles of a hexagon are in the ratio 4 : 5 : 6 : 6 : 7 : 8.\n\nCalculate the smallest angle of the hexagon (in degrees).", 
+            options: [
+                "A) 20", 
+                "B) 80", 
+                "C) 88", 
+                "D) 96", 
+                "E) 160"
+            ] 
+        },
+        { 
+            id: 18, 
+            theme: "Mathematics", 
+            text: "A solid pyramid has a square base of side length 12 cm and a vertical height of h cm. The volume of the pyramid, in cm³, is equal to the total surface area of the pyramid, in cm².<br><img src='img/18.png' class='question-image' alt='Pyramid Diagram'><br>What is the value of h? (Volume of a pyramid = 1/3 × base area × height)", 
+            options: [
+                "A) 72/35", 
+                "B) 2√3", 
+                "C) 6", 
+                "D) 144/23", 
+                "E) 8", 
+                "F) 2√21"
+            ] 
+        },
+        { 
+            id: 19, 
+            theme: "Mathematics", 
+            text: "A circle has centre O. Angle AOB is 136° and angle CBO is 30°. <br><img src='img/19.png' class='question-image' alt='Circle Diagram'><br>What is the size of angle CAO?", 
+            options: [
+                "A) 22°", 
+                "B) 24°", 
+                "C) 28°", 
+                "D) 30°", 
+                "E) 38°"
+            ] 
+        },
+        { 
+            id: 20, 
+            theme: "Mathematics", 
+            text: "Two sequences are given: S = (n + 2)² and T = 5n + k, where k is a constant. The 7th term of sequence S is equal to three times the 3rd term of sequence T. Find the value of k.", 
+            options: [
+                "A) 9", 
+                "B) 12", 
+                "C) 15", 
+                "D) 6", 
+                "E) 27", 
+                "F) -12"
+            ] 
+        }
+    ];
+
+    const questionsWithImages = [2, 6, 16, 18, 19];
+
+    let userData = {};
+    let userAnswers = {};
+
+    const privacyModal = document.getElementById('privacy-modal');
+    const openPrivacyBtn = document.getElementById('open-privacy-btn');
+    const closePrivacyBtn = document.getElementById('close-privacy-btn');
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const langContents = document.querySelectorAll('.lang-content');
+
+    openPrivacyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        privacyModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    });
+
+    const closePrivacy = () => {
+        privacyModal.classList.add('hidden');
+        document.body.style.overflow = '';
+    };
+
+    closePrivacyBtn.addEventListener('click', closePrivacy);
+    privacyModal.addEventListener('click', (e) => {
+        if (e.target === privacyModal) closePrivacy();
+    });
+
+    langButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetLang = button.getAttribute('data-lang');
+            langButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            langContents.forEach(content => {
+                if (content.id === `content-${targetLang}`) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        });
+    });
+
+    const mapSidebar = document.getElementById('question-map-sidebar');
+    const toggleMapBtn = document.getElementById('toggle-map-btn');
+    const closeMapSidebar = document.getElementById('close-map-sidebar');
+
+    toggleMapBtn.addEventListener('click', () => {
+        mapSidebar.classList.remove('closed');
+    });
+
+    const closeSidebar = () => {
+        mapSidebar.classList.add('closed');
+    };
+
+    closeMapSidebar.addEventListener('click', closeSidebar);
+
+    // Регистрация
+    document.getElementById('reg-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        userData = {
+            name: document.getElementById('userName').value,
+            email: document.getElementById('userEmail').value,
+            phone: document.getElementById('userPhone').value
+        };
+        
+        document.getElementById('user-display').innerHTML = `<div class="user-badge">${userData.name}</div>`;
+        document.getElementById('auth-block').classList.add('hidden');
+        document.getElementById('quiz-block').classList.remove('hidden');
+        
+        buildCubes();
+        renderAllQuestions();
+    });
+
+    function buildCubes() {
+        const container = document.getElementById('cubes-grid');
+        container.innerHTML = '';
+        questions.forEach((q, idx) => {
+            const cube = document.createElement('div');
+            cube.className = 'cube';
+            cube.id = `cube-${idx}`;
+            cube.innerText = idx + 1;
+            cube.addEventListener('click', () => {
+                const el = document.getElementById(`q-card-block-${idx}`);
+                if(el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(window.innerWidth <= 768) {
+                        closeSidebar();
+                    }
+                }
+            });
+            container.appendChild(cube);
+        });
+    }
+
+    function renderAllQuestions() {
+        const box = document.getElementById('questions-scroll-box');
+        box.innerHTML = '';
+        
+        questions.forEach((q, idx) => {
+            const qCard = document.createElement('div');
+            qCard.className = 'card question-card';
+            qCard.id = `q-card-block-${idx}`;
+            
+            
+            qCard.innerHTML = `
+                <div class="theme-badge">${q.theme}</div>
+                <div class="question-text">${idx + 1}. ${q.text}</div>
+                <div class="options-list" id="opts-list-${idx}"></div>
+            `;
+            box.appendChild(qCard);
+            
+            const optsContainer = document.getElementById(`opts-list-${idx}`);
+            q.options.forEach((opt, optIdx) => {
+                const label = document.createElement('label');
+                label.className = 'option-item';
+                label.id = `label-${idx}-${optIdx}`;
+                label.innerHTML = `
+                    <input type="radio" name="answer_q_${q.id}" value="${optIdx}">
+                    <span>${opt}</span>
+                `;
+                
+                label.querySelector('input').addEventListener('change', () => {
+                    userAnswers[q.id] = optIdx;
+                    
+                    document.querySelectorAll(`#opts-list-${idx} .option-item`).forEach(el => el.classList.remove('selected'));
+                    label.classList.add('selected');
+                    
+                    document.getElementById(`cube-${idx}`).classList.add('answered');
+                });
+                
+                optsContainer.appendChild(label);
+            });
+        });
+    }
+
+    function handleOpenConfirmModal() {
+        const totalAnswered = Object.keys(userAnswers).length;
+        const totalQuestions = questions.length;
+        const warningText = document.getElementById('modal-warning-text');
+        
+        if (totalAnswered < totalQuestions) {
+            warningText.innerHTML = `Warning! You have only answered <strong>${totalAnswered} out of ${totalQuestions}</strong> questions.<br><br>Are you sure you want to finish the test right now? Missing answers will be marked as incorrect.`;
+        } else {
+            warningText.innerHTML = `You have answered all <strong>${totalQuestions}</strong> questions!<br><br>Ready to submit your results for verification?`;
+        }
+        
+        closeSidebar();
+        document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+
+    
+    document.getElementById('btn-open-confirm').addEventListener('click', handleOpenConfirmModal);
+    document.getElementById('btn-bottom-finish').addEventListener('click', handleOpenConfirmModal);
+
+    
+    document.getElementById('btn-modal-cancel').addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+    });
+
+    
+    document.getElementById('btn-modal-submit').addEventListener('click', async () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        
+        const payload = { ...userData, answers: userAnswers };
+
+        try {
+            const response = await fetch(`${window.location.origin}/api/submit-quiz`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                document.getElementById('quiz-block').classList.add('hidden');
+                document.getElementById('final-block').classList.remove('hidden');
+                window.scrollTo(0, 0);
+            } else {
+                alert('Server error while saving answers.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Critical network error. Make sure Node.js server and MongoDB are running.');
+        }
+    });
+</script>
+</body>
+</html>
