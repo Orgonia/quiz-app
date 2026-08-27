@@ -19,10 +19,10 @@ const ResultSchema = new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
-    detailedAnswers: Array, 
-    score: Number,          
+    detailedAnswers: { type: Array, default: [] }, 
+    score: { type: Number, default: 0 },          
     createdAt: { type: Date, default: Date.now }
-});
+}, { strict: false });
 
 const Result = mongoose.model('Result', ResultSchema);
 
@@ -31,32 +31,22 @@ const correctAnswers = {
     11: 1, 12: 7, 13: 1, 14: 0, 15: 3, 16: 5, 17: 1, 18: 4, 19: 4, 20: 1
 };
 
-
-// Эндпоинт мгновенной записи контактов в MongoDB
+// 1. ЭНДПОИНТ ДЛЯ МГНОВЕННОГО СОХРАНЕНИЯ КОНТАКТОВ
 app.post('/api/register-candidate', async (req, res) => {
     try {
         const { name, email, phone } = req.body;
         
-        const newResult = new Result({
-            name,
-            email,
-            phone,
-            detailedAnswers: [],
-            score: 0
-        });
-        
+        // Создаем запись только с контактами — без лишних полей, чтобы не вызывать ошибку базы
+        const newResult = new Result({ name, email, phone });
         await newResult.save();
         
-        res.status(200).json({ success: true, id: newResult._id });
+        // Возвращаем фронтенду текстовый ID созданной записи
+        return res.status(200).json({ success: true, id: newResult._id.toString() });
     } catch (error) {
         console.error("Ошибка сохранения лида:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
 });
-
-
-
-
 
 app.post('/api/submit-quiz', async (req, res) => {
     try {
@@ -79,24 +69,20 @@ app.post('/api/submit-quiz', async (req, res) => {
             });
         }
 
-        // Если фронтенд передал ID ранее созданного лида — обновляем его запись ответами
+        // Если с фронтенда пришел ID кандидата — обновляем его запись
         if (candidateId) {
-            // Используем явное приведение строки в ObjectId для безопасности MongoDB
             const objectId = new mongoose.Types.ObjectId(candidateId);
             
-            const updated = await Result.findByIdAndUpdate(objectId, {
+            await Result.findByIdAndUpdate(objectId, {
                 $set: {
                     detailedAnswers: detailedAnswers,
                     score: score
                 }
             });
-            
-            if (updated) {
-                return res.status(200).json({ success: true });
-            }
-            console.log("Кандидат с таким ID не найден в базе, создаем резервную запись.");
+            return res.status(200).json({ success: true });
         } 
         
+        // Резервный случай: если ID потерялся, создаем новую запись
         const fallbackResult = new Result({ 
             name: "Unknown (Late Submit)", 
             email: "-", 
@@ -105,18 +91,13 @@ app.post('/api/submit-quiz', async (req, res) => {
             score 
         });
         await fallbackResult.save();
-        res.status(200).json({ success: true });
+        return res.status(200).json({ success: true });
 
     } catch (error) {
         console.error("Ошибка при финальной отправке:", error);
-        res.status(500).json({ error: "Internal Server Error", message: error.message });
+        return res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
 });
-
-
-
-
-
 
 app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/')) {
@@ -126,5 +107,9 @@ app.get('*', (req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Сервер запущен`));
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Сервер запущен`));
+}
+
 module.exports = app;
