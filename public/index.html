@@ -196,11 +196,11 @@
                 <p>TigerZnuet — NUET-ке дайындық, сынақ емтихандары, практикалық тапсырмалар, оқу прогресі және оқушыларды қолдау үшін жасалған білім беру платформасы.</p>
                 <h2>Қандай деректер жинаймыз</h2>
                 <p>Біз аккаунт деректерін жинауымыз мүмким: аты-жөні, email, username, авторизация провайдері туралы ақпарат және пайдаланушы рөлі.</p>
-                <p>Біз оқу деректерін жинауымыз мүмкін: тағайындалған mock емтихандар, жауаптар, баллдар, прогресс, профиль деректері және жұмыс кабинетіндегі белсенділік.</p>
+                <p>Біз оқу деректерін жинауымыз мүмкін: тағайындалған mock емтихандар, жауаптар, баллдар, прогресс, профиль деректері AND жұмыс кабинетіндегі белсенділік.</p>
                 <p>Сіз бізбен байланысқанда, телефон, email, Telegram, WhatsApp немесе басқа арналар арқылы жіберген байланыс деректері мен хабарлама мазмұнын өңдеуіміз мүмкін.</p>
                 <h2>Деректерді қалай пайдаланамыз</h2>
                 <p>Біз жеке деректерді аккаунт ашу, платформаға қолжетімділік беру, mock емтихандар өткізу, прогресті көрсету, оқушыларды қолдау, сабақтарды жақсарту және курс бойынша байланысу үшін пайдаланамыз.</p>
-                <p>Сондай-ақ деректерді платформаны қорғау, теріс пайдаланудын алдын алу, техникалық мәселелерді түзету және заң талаптарын орындау үшін пайдаланамыз.</p>
+                <p>Сондай-ақ деректерді платформаны қорғау, теріс пайдаланудың алдын алу, техникалық мәселелерді түзету және заң талаптарын орындау үшін пайдаланамыз.</p>
                 <h2>Cookies және аналитика</h2>
                 <p>Біз авторизация, сессия қауіпсіздігі, тіл баптаулары және базалық өнім аналитикасы үшін cookies және ұқсас технологияларды қолданамыз.</p>
                 <p>Cookies баптауларын браузерде басқара аласыз, бірақ міндетті cookies өшірілсе, платформаның кейбір функциялары дұрыс жұмыс істемеуі мүмкін.</p>
@@ -351,7 +351,7 @@
         { 
             id: 9, 
             theme: "Critical Thinking", 
-            text: "An analysis of major tech startups over the past ten years reveals a striking trend: 85% of founders who successfully took their companies public practiced an intensive form of extreme wilderness endurance training in their youth. This proves that pushing one's physical limits in unpredictable natural settings is an excellent method for instilling the exact psychological resilience needed to navigate high-stakes corporate financial landscapes. Therefore, young aspiring entrepreneurs should enroll in wilderness endurance courses to secure business success.\n\nWhich one of the following is the best statement of the flaw in the argument above?", 
+            text: "An analysis of major tech startups over the past ten years reveals a striking trend: 85% of founders who successfully took their companies public practiced an intensive form of extreme wilderness wilderness endurance training in their youth. This proves that pushing one's physical limits in unpredictable natural settings is an excellent method for instilling the exact psychological resilience needed to navigate high-stakes corporate financial landscapes. Therefore, young aspiring entrepreneurs should enroll in wilderness endurance courses to secure business success.\n\nWhich one of the following is the best statement of the flaw in the argument above?", 
             options: [
                 "A) It fails to consider that wilderness training may expose young participants to severe physical injuries or hazards.", 
                 "B) It overlooks the possibility that individuals who already possess high innate resilience are naturally drawn to both wilderness training and corporate founding.", 
@@ -505,11 +505,10 @@
 
     const questionsWithImages = [2, 6, 16, 18, 19];
 
-    let candidateId = null;
     let userData = {};
     let userAnswers = {};
     let timerInterval = null;
-    let timeRemaining = 3600;
+    let timeRemaining = 3600; 
     let warningAlerted = false;
 
     const privacyModal = document.getElementById('privacy-modal');
@@ -573,10 +572,12 @@
             let minutes = Math.floor(timeRemaining / 60);
             let seconds = timeRemaining % 60;
 
-            timerCountdown.innerText = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+            if(timerCountdown) {
+                timerCountdown.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
 
             if (timeRemaining <= 300 && !warningAlerted) {
-                timerContainer.classList.add('warning');
+                if(timerContainer) timerContainer.classList.add('warning');
                 warningAlerted = true;
                 alert('Внимание! До окончания тестирования осталось 5 минут. По истечении времени ответы отправятся автоматически.');
             }
@@ -599,23 +600,20 @@
         };
 
         try {
-            const response = await fetch(window.location.origin + '/api/register-candidate', {
+            const response = await fetch(`${window.location.origin}/api/register-candidate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(userData)
             });
 
             if (response.ok) {
-                const result = await response.json();
-                candidateId = result.id;
-                
-                document.getElementById('user-display').innerHTML = '<div class="user-badge">' + userData.name + '</div>';
+                document.getElementById('user-display').innerHTML = `<div class="user-badge">${userData.name}</div>`;
                 document.getElementById('auth-block').classList.add('hidden');
                 document.getElementById('quiz-block').classList.remove('hidden');
                 
                 buildCubes();
                 renderAllQuestions();
-                startTimer();
+                startTimer(); 
             } else {
                 alert('Ошибка при регистрации. Пожалуйста, попробуйте снова.');
             }
@@ -631,10 +629,10 @@
         questions.forEach((q, idx) => {
             const cube = document.createElement('div');
             cube.className = 'cube';
-            cube.id = 'cube-' + idx;
+            cube.id = `cube-${idx}`;
             cube.innerText = idx + 1;
             cube.addEventListener('click', () => {
-                const el = document.getElementById('q-card-block-' + idx);
+                const el = document.getElementById(`q-card-block-${idx}`);
                 if(el) {
                     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     if(window.innerWidth <= 768) {
@@ -653,28 +651,32 @@
         questions.forEach((q, idx) => {
             const qCard = document.createElement('div');
             qCard.className = 'card question-card';
-            qCard.id = 'q-card-block-' + idx;
+            qCard.id = `q-card-block-${idx}`;
             
-            qCard.innerHTML = '<div class="theme-badge">' + q.theme + '</div>' +
-                               '<div class="question-text">' + (idx + 1) + '. ' + q.text + '</div>' +
-                               '<div class="options-list" id="opts-list-' + idx + '"></div>';
+            qCard.innerHTML = `
+                <div class="theme-badge">${q.theme}</div>
+                <div class="question-text">${idx + 1}. ${q.text}</div>
+                <div class="options-list" id="opts-list-${idx}"></div>
+            `;
             box.appendChild(qCard);
             
-            const optsContainer = document.getElementById('opts-list-' + idx);
+            const optsContainer = document.getElementById(`opts-list-${idx}`);
             q.options.forEach((opt, optIdx) => {
                 const label = document.createElement('label');
                 label.className = 'option-item';
-                label.id = 'label-' + idx + '-' + optIdx;
-                label.innerHTML = '<input type="radio" name="answer_q_' + q.id + '" value="' + optIdx + '">' +
-                                  '<span>' + opt + '</span>';
+                label.id = `label-${idx}-${optIdx}`;
+                label.innerHTML = `
+                    <input type="radio" name="answer_q_${q.id}" value="${optIdx}">
+                    <span>${opt}</span>
+                `;
                 
                 label.querySelector('input').addEventListener('change', () => {
                     userAnswers[q.id] = optIdx;
                     
-                    document.querySelectorAll('#opts-list-' + idx + ' .option-item').forEach(el => el.classList.remove('selected'));
+                    document.querySelectorAll(`#opts-list-${idx} .option-item`).forEach(el => el.classList.remove('selected'));
                     label.classList.add('selected');
                     
-                    document.getElementById('cube-' + idx).classList.add('answered');
+                    document.getElementById(`cube-${idx}`).classList.add('answered');
                 });
                 
                 optsContainer.appendChild(label);
@@ -688,9 +690,9 @@
         const warningText = document.getElementById('modal-warning-text');
         
         if (totalAnswered < totalQuestions) {
-            warningText.innerHTML = 'Warning! You have only answered <strong>' + totalAnswered + ' out of ' + totalQuestions + '</strong> questions.<br><br>Are you sure you want to finish the test right now? Missing answers will be marked as incorrect.';
+            warningText.innerHTML = `Warning! You have only answered <strong>${totalAnswered} out of ${totalQuestions}</strong> questions.<br><br>Are you sure you want to finish the test right now? Missing answers will be marked as incorrect.`;
         } else {
-            warningText.innerHTML = 'You have answered all <strong>' + totalQuestions + '</strong> questions!<br><br>Ready to submit your results for verification?';
+            warningText.innerHTML = `You have answered all <strong>${totalQuestions}</strong> questions!<br><br>Ready to submit your results for verification?`;
         }
         
         closeSidebar();
@@ -717,12 +719,14 @@
 
     async function submitFinalAnswers() {
         const payload = { 
-            candidateId: candidateId,
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
             answers: userAnswers 
         };
 
         try {
-            const response = await fetch(window.location.origin + '/api/submit-quiz', {
+            const response = await fetch(`${window.location.origin}/api/submit-quiz`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
