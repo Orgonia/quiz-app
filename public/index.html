@@ -5,32 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tigerznuet Testing Platform</title>
     <link rel="stylesheet" href="style.css">
-    
+
     <!-- Meta Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1416652667004321');
-    fbq('track', 'PageView');
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1678513749911698');
+        fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1416652667004321&ev=PageView&noscript=1"
-    /></noscript>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1678513749911698&ev=PageView&noscript=1"/></noscript>
 
     <meta name="facebook-domain-verification" content="x9jzbjwhhsvqqsjbksxnrplsfqi7w3" />
     <!-- End Meta Pixel Code -->
     
+    <style>
+        .timer-container {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 16px;
+            color: #334155;
+            transition: all 0.3s ease;
+        }
+        .timer-container.warning {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #b91c1c;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
 
 <div class="layout-container">
-
 
     <div class="top-bar">
         <div class="logo">
@@ -39,7 +63,6 @@
         </div>
         <div id="user-display"></div>
     </div>
-
 
     <div id="auth-block" class="card">
         <h2 class="reg-title">Candidate Registration</h2>
@@ -72,20 +95,20 @@
         </form>
     </div>
 
-
     <div id="quiz-block" class="quiz-workspace hidden">
         
+        <div id="test-timer" class="timer-container">
+            <span>Time Remaining:</span>
+            <span id="timer-countdown">60:00</span>
+        </div>
 
         <div class="questions-list-scroll" id="questions-scroll-box"></div>
-
 
         <div class="bottom-actions-bar">
             <button type="button" id="btn-bottom-finish" class="btn btn-primary btn-large">Finish Test</button>
         </div>
 
-
         <button type="button" id="toggle-map-btn" class="qmap-toggle-button">📋 Question Map</button>
-
 
         <div id="question-map-sidebar" class="qmap-sidebar closed">
             <div class="qmap-header">
@@ -120,7 +143,6 @@
         </div>
     </div>
 </div>
-
 
 <div id="privacy-modal" class="privacy-modal-backdrop hidden">
     <div class="privacy-modal-window">
@@ -178,7 +200,7 @@
                 <p>Сіз бізбен байланысқанда, телефон, email, Telegram, WhatsApp немесе басқа арналар арқылы жіберген байланыс деректері мен хабарлама мазмұнын өңдеуіміз мүмкін.</p>
                 <h2>Деректерді қалай пайдаланамыз</h2>
                 <p>Біз жеке деректерді аккаунт ашу, платформаға қолжетімділік беру, mock емтихандар өткізу, прогресті көрсету, оқушыларды қолдау, сабақтарды жақсарту және курс бойынша байланысу үшін пайдаланамыз.</p>
-                <p>Сондай-ақ деректерді платформаны қорғау, теріс пайдаланудың алдын алу, техникалық мәселелерді түзету және заң талаптарын орындау үшін пайдаланамыз.</p>
+                <p>Сондай-ақ деректерді платформаны қорғау, теріс пайдаланудын алдын алу, техникалық мәселелерді түзету және заң талаптарын орындау үшін пайдаланамыз.</p>
                 <h2>Cookies және аналитика</h2>
                 <p>Біз авторизация, сессия қауіпсіздігі, тіл баптаулары және базалық өнім аналитикасы үшін cookies және ұқсас технологияларды қолданамыз.</p>
                 <p>Cookies баптауларын браузерде басқара аласыз, бірақ міндетті cookies өшірілсе, платформаның кейбір функциялары дұрыс жұмыс істемеуі мүмкін.</p>
@@ -230,12 +252,11 @@
 </div>
 
 <script>
-    // Вопросовы
     const questions = [
         { 
             id: 1, 
             theme: "Critical Thinking", 
-            text: "Many cities are rushing to build extensive network infrastructures for automated self-driving public shuttles. While proponents argue that this will significantly reduce urban gridlock, historical data on traffic psychology shows that whenever public transit becomes highly streamlined, it paradoxчески increases outer-suburban sprawl. As commuting becomes more effortless, individuals comfortably relocate further away from urban centers, which ultimately introduces a massive influx of private vehicles into city peripheries over time. Therefore, municipalities must halt immediate investments in automated transit infrastructure until robust dynamic outer-boundary zoning laws are firmly established.\n\nWhich one of the following best expresses the main conclusion of the above argument?", 
+            text: "Many cities are rushing to build extensive network infrastructures for automated self-driving public shuttles. While proponents argue that this will significantly reduce urban gridlock, historical data on traffic psychology shows that whenever public transit becomes highly streamlined, it paradoxically increases outer-suburban sprawl. As commuting becomes more effortless, individuals comfortably relocate further away from urban centers, which ultimately introduces a massive influx of private vehicles into city peripheries over time. Therefore, municipalities must halt immediate investments in automated transit infrastructure until robust dynamic outer-boundary zoning laws are firmly established.\n\nWhich one of the following best expresses the main conclusion of the above argument?", 
             options: [
                 "A) Automated self-driving public shuttles will not succeed in significantly reducing urban traffic gridlock.", 
                 "B) Streamlined public transit networks invariably encourage commuters to relocate to outer-suburban regions.", 
@@ -484,8 +505,12 @@
 
     const questionsWithImages = [2, 6, 16, 18, 19];
 
+    let candidateId = null;
     let userData = {};
     let userAnswers = {};
+    let timerInterval = null;
+    let timeRemaining = 3600;
+    let warningAlerted = false;
 
     const privacyModal = document.getElementById('privacy-modal');
     const openPrivacyBtn = document.getElementById('open-privacy-btn');
@@ -538,21 +563,66 @@
 
     closeMapSidebar.addEventListener('click', closeSidebar);
 
-    // Регистрация
-    document.getElementById('reg-form').addEventListener('submit', function(e) {
+    function startTimer() {
+        const timerCountdown = document.getElementById('timer-countdown');
+        const timerContainer = document.getElementById('test-timer');
+
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+
+            let minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+
+            timerCountdown.innerText = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+
+            if (timeRemaining <= 300 && !warningAlerted) {
+                timerContainer.classList.add('warning');
+                warningAlerted = true;
+                alert('Внимание! До окончания тестирования осталось 5 минут. По истечении времени ответы отправятся автоматически.');
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert('Время вышло! Ваш тест автоматически отправляется на проверку.');
+                autoSubmitQuiz();
+            }
+        }, 1000);
+    }
+
+    document.getElementById('reg-form').addEventListener('submit', async function(e) {
         e.preventDefault();
+        
         userData = {
             name: document.getElementById('userName').value,
             email: document.getElementById('userEmail').value,
             phone: document.getElementById('userPhone').value
         };
-        
-        document.getElementById('user-display').innerHTML = `<div class="user-badge">${userData.name}</div>`;
-        document.getElementById('auth-block').classList.add('hidden');
-        document.getElementById('quiz-block').classList.remove('hidden');
-        
-        buildCubes();
-        renderAllQuestions();
+
+        try {
+            const response = await fetch(window.location.origin + '/api/register-candidate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                candidateId = result.id;
+                
+                document.getElementById('user-display').innerHTML = '<div class="user-badge">' + userData.name + '</div>';
+                document.getElementById('auth-block').classList.add('hidden');
+                document.getElementById('quiz-block').classList.remove('hidden');
+                
+                buildCubes();
+                renderAllQuestions();
+                startTimer();
+            } else {
+                alert('Ошибка при регистрации. Пожалуйста, попробуйте снова.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Сеть недоступна. Не удалось сохранить контактные данные.');
+        }
     });
 
     function buildCubes() {
@@ -561,10 +631,10 @@
         questions.forEach((q, idx) => {
             const cube = document.createElement('div');
             cube.className = 'cube';
-            cube.id = `cube-${idx}`;
+            cube.id = 'cube-' + idx;
             cube.innerText = idx + 1;
             cube.addEventListener('click', () => {
-                const el = document.getElementById(`q-card-block-${idx}`);
+                const el = document.getElementById('q-card-block-' + idx);
                 if(el) {
                     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     if(window.innerWidth <= 768) {
@@ -583,33 +653,28 @@
         questions.forEach((q, idx) => {
             const qCard = document.createElement('div');
             qCard.className = 'card question-card';
-            qCard.id = `q-card-block-${idx}`;
+            qCard.id = 'q-card-block-' + idx;
             
-            
-            qCard.innerHTML = `
-                <div class="theme-badge">${q.theme}</div>
-                <div class="question-text">${idx + 1}. ${q.text}</div>
-                <div class="options-list" id="opts-list-${idx}"></div>
-            `;
+            qCard.innerHTML = '<div class="theme-badge">' + q.theme + '</div>' +
+                               '<div class="question-text">' + (idx + 1) + '. ' + q.text + '</div>' +
+                               '<div class="options-list" id="opts-list-' + idx + '"></div>';
             box.appendChild(qCard);
             
-            const optsContainer = document.getElementById(`opts-list-${idx}`);
+            const optsContainer = document.getElementById('opts-list-' + idx);
             q.options.forEach((opt, optIdx) => {
                 const label = document.createElement('label');
                 label.className = 'option-item';
-                label.id = `label-${idx}-${optIdx}`;
-                label.innerHTML = `
-                    <input type="radio" name="answer_q_${q.id}" value="${optIdx}">
-                    <span>${opt}</span>
-                `;
+                label.id = 'label-' + idx + '-' + optIdx;
+                label.innerHTML = '<input type="radio" name="answer_q_' + q.id + '" value="' + optIdx + '">' +
+                                  '<span>' + opt + '</span>';
                 
                 label.querySelector('input').addEventListener('change', () => {
                     userAnswers[q.id] = optIdx;
                     
-                    document.querySelectorAll(`#opts-list-${idx} .option-item`).forEach(el => el.classList.remove('selected'));
+                    document.querySelectorAll('#opts-list-' + idx + ' .option-item').forEach(el => el.classList.remove('selected'));
                     label.classList.add('selected');
                     
-                    document.getElementById(`cube-${idx}`).classList.add('answered');
+                    document.getElementById('cube-' + idx).classList.add('answered');
                 });
                 
                 optsContainer.appendChild(label);
@@ -623,32 +688,41 @@
         const warningText = document.getElementById('modal-warning-text');
         
         if (totalAnswered < totalQuestions) {
-            warningText.innerHTML = `Warning! You have only answered <strong>${totalAnswered} out of ${totalQuestions}</strong> questions.<br><br>Are you sure you want to finish the test right now? Missing answers will be marked as incorrect.`;
+            warningText.innerHTML = 'Warning! You have only answered <strong>' + totalAnswered + ' out of ' + totalQuestions + '</strong> questions.<br><br>Are you sure you want to finish the test right now? Missing answers will be marked as incorrect.';
         } else {
-            warningText.innerHTML = `You have answered all <strong>${totalQuestions}</strong> questions!<br><br>Ready to submit your results for verification?`;
+            warningText.innerHTML = 'You have answered all <strong>' + totalQuestions + '</strong> questions!<br><br>Ready to submit your results for verification?';
         }
         
         closeSidebar();
         document.getElementById('confirm-modal').classList.remove('hidden');
     }
 
-    
     document.getElementById('btn-open-confirm').addEventListener('click', handleOpenConfirmModal);
     document.getElementById('btn-bottom-finish').addEventListener('click', handleOpenConfirmModal);
 
-    
     document.getElementById('btn-modal-cancel').addEventListener('click', () => {
         document.getElementById('confirm-modal').classList.add('hidden');
     });
 
-    
     document.getElementById('btn-modal-submit').addEventListener('click', async () => {
         document.getElementById('confirm-modal').classList.add('hidden');
-        
-        const payload = { ...userData, answers: userAnswers };
+        if (timerInterval) clearInterval(timerInterval);
+        await submitFinalAnswers();
+    });
+
+    async function autoSubmitQuiz() {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        await submitFinalAnswers();
+    }
+
+    async function submitFinalAnswers() {
+        const payload = { 
+            candidateId: candidateId,
+            answers: userAnswers 
+        };
 
         try {
-            const response = await fetch(`${window.location.origin}/api/submit-quiz`, {
+            const response = await fetch(window.location.origin + '/api/submit-quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -665,7 +739,7 @@
             console.error(err);
             alert('Critical network error. Make sure Node.js server and MongoDB are running.');
         }
-    });
+    }
 </script>
 </body>
 </html>
