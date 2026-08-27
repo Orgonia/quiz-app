@@ -32,10 +32,7 @@ const correctAnswers = {
 };
 
 
-
-
-
-// 1. Эндпоинт для мгновенного сохранения контактов
+// Эндпоинт мгновенной записи контактов в MongoDB
 app.post('/api/register-candidate', async (req, res) => {
     try {
         const { name, email, phone } = req.body;
@@ -52,12 +49,10 @@ app.post('/api/register-candidate', async (req, res) => {
         
         res.status(200).json({ success: true, id: newResult._id });
     } catch (error) {
-        console.error(error);
+        console.error("Ошибка сохранения лида:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-
-
 
 
 
@@ -93,7 +88,7 @@ app.post('/api/submit-quiz', async (req, res) => {
         } 
         
         const fallbackResult = new Result({ 
-            name: "Unknown (Late Submit)", 
+            name: "Unknown (No ID Received)", 
             email: "-", 
             phone: "-", 
             detailedAnswers, 
@@ -103,10 +98,13 @@ app.post('/api/submit-quiz', async (req, res) => {
         res.status(200).json({ success: true });
 
     } catch (error) {
-        console.error(error);
+        console.error("Ошибка при финальной отправке:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
+
 
 
 app.get('*', (req, res, next) => {
