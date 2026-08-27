@@ -31,28 +31,20 @@ const correctAnswers = {
     11: 1, 12: 7, 13: 1, 14: 0, 15: 3, 16: 5, 17: 1, 18: 4, 19: 4, 20: 1
 };
 
-// 1. МГНОВЕННАЯ СБОРКА ЛИДОВ (КОНТАКТОВ)
+// Эндпоинт мгновенной записи чистых контактов при входе
 app.post('/api/register-candidate', async (req, res) => {
     try {
         const { name, email, phone } = req.body;
-        
-        const newLead = new Result({ 
-            name: name || "Без имени", 
-            email: email || "-", 
-            phone: phone || "-", 
-            detailedAnswers: [], 
-            score: 0 
-        });
+        const newLead = new Result({ name, email, phone, detailedAnswers: [], score: 0 });
         await newLead.save();
-        
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.error("Ошибка при сохранении лида:", error);
+        console.error(error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-// 2. ОТПРАВКА ТЕСТА С ПОЛНЫМ СОЗДАНИЕМ НОВОЙ СТРОКИ
+// Твой проверенный эндпоинт отправки ответов в отдельную запись
 app.post('/api/submit-quiz', async (req, res) => {
     try {
         const { name, email, phone, answers } = req.body;
@@ -74,20 +66,11 @@ app.post('/api/submit-quiz', async (req, res) => {
             });
         }
 
-        // ответы новой строкой
-        const newResult = new Result({ 
-            name: name || "Без имени", 
-            email: email || "-", 
-            phone: phone || "-", 
-            detailedAnswers, 
-            score 
-        });
-        
+        const newResult = new Result({ name, email, phone, detailedAnswers, score });
         await newResult.save();
         return res.status(200).json({ success: true });
-
     } catch (error) {
-        console.error("Ошибка при финальной отправке:", error);
+        console.error(error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
