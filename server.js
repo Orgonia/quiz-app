@@ -31,21 +31,28 @@ const correctAnswers = {
     11: 1, 12: 7, 13: 1, 14: 0, 15: 3, 16: 5, 17: 1, 18: 4, 19: 4, 20: 1
 };
 
-// 1. МГНОВЕННЫЙ СБОР КОНТАКТОВ НА ПЕРВОЙ СТРАНИЦЕ
+// 1. МГНОВЕННАЯ СБОРКА ЛИДОВ (КОНТАКТОВ)
 app.post('/api/register-candidate', async (req, res) => {
     try {
         const { name, email, phone } = req.body;
         
-        const newLead = new Result({ name, email, phone, detailedAnswers: [], score: 0 });
+        const newLead = new Result({ 
+            name: name || "Без имени", 
+            email: email || "-", 
+            phone: phone || "-", 
+            detailedAnswers: [], 
+            score: 0 
+        });
         await newLead.save();
         
-        return res.status(200).json({ success: true, id: "dummy_id" });
+        return res.status(200).json({ success: true });
     } catch (error) {
         console.error("Ошибка при сохранении лида:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
+// 2. ОТПРАВКА ТЕСТА С ПОЛНЫМ СОЗДАНИЕМ НОВОЙ СТРОКИ
 app.post('/api/submit-quiz', async (req, res) => {
     try {
         const { name, email, phone, answers } = req.body;
@@ -67,8 +74,9 @@ app.post('/api/submit-quiz', async (req, res) => {
             });
         }
 
+        // ответы новой строкой
         const newResult = new Result({ 
-            name: name || "Unknown", 
+            name: name || "Без имени", 
             email: email || "-", 
             phone: phone || "-", 
             detailedAnswers, 
