@@ -31,9 +31,41 @@ const correctAnswers = {
     11: 1, 12: 7, 13: 1, 14: 0, 15: 3, 16: 5, 17: 1, 18: 4, 19: 4, 20: 1
 };
 
+
+
+
+
+// 1. Эндпоинт для мгновенного сохранения контактов
+app.post('/api/register-candidate', async (req, res) => {
+    try {
+        const { name, email, phone } = req.body;
+        
+        const newResult = new Result({
+            name,
+            email,
+            phone,
+            detailedAnswers: [],
+            score: 0
+        });
+        
+        await newResult.save();
+        
+        res.status(200).json({ success: true, id: newResult._id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+
+
+
+
+
 app.post('/api/submit-quiz', async (req, res) => {
     try {
-        const { name, email, phone, answers } = req.body;
+        const { candidateId, answers } = req.body;
         let detailedAnswers = [];
         let score = 0;
 
@@ -52,14 +84,30 @@ app.post('/api/submit-quiz', async (req, res) => {
             });
         }
 
-        const newResult = new Result({ name, email, phone, detailedAnswers, score });
-        await newResult.save();
+        if (candidateId) {
+            await Result.findByIdAndUpdate(candidateId, {
+                detailedAnswers,
+                score
+            });
+            return res.status(200).json({ success: true });
+        } 
+        
+        const fallbackResult = new Result({ 
+            name: "Unknown (Late Submit)", 
+            email: "-", 
+            phone: "-", 
+            detailedAnswers, 
+            score 
+        });
+        await fallbackResult.save();
         res.status(200).json({ success: true });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/')) {
