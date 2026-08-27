@@ -79,16 +79,26 @@ app.post('/api/submit-quiz', async (req, res) => {
             });
         }
 
+        // Если фронтенд передал ID ранее созданного лида — обновляем его запись ответами
         if (candidateId) {
-            await Result.findByIdAndUpdate(candidateId, {
-                detailedAnswers,
-                score
+            // Используем явное приведение строки в ObjectId для безопасности MongoDB
+            const objectId = new mongoose.Types.ObjectId(candidateId);
+            
+            const updated = await Result.findByIdAndUpdate(objectId, {
+                $set: {
+                    detailedAnswers: detailedAnswers,
+                    score: score
+                }
             });
-            return res.status(200).json({ success: true });
+            
+            if (updated) {
+                return res.status(200).json({ success: true });
+            }
+            console.log("Кандидат с таким ID не найден в базе, создаем резервную запись.");
         } 
         
         const fallbackResult = new Result({ 
-            name: "Unknown (No ID Received)", 
+            name: "Unknown (Late Submit)", 
             email: "-", 
             phone: "-", 
             detailedAnswers, 
@@ -99,9 +109,10 @@ app.post('/api/submit-quiz', async (req, res) => {
 
     } catch (error) {
         console.error("Ошибка при финальной отправке:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
 });
+
 
 
 
