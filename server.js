@@ -11,9 +11,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const cloudURI = process.env.MONGODB_URI || 'mongodb+srv://sanzharshoman2_db_user:v3qVlRxrjrUSU9zS@cluster0.wakytga.mongodb.net/?appName=Cluster0';
 
-mongoose.connect(cloudURI)
-  .then(() => console.log('=== УСПЕШНОЕ ПОДКЛЮЧЕНИЕ К ОБЛАЧНОЙ MONGODB ATLAS! ==='))
-  .catch(err => console.error('Ошибка подключения к облаку:', err));
+async function connectDB() {
+    if (mongoose.connection.readyState === 1) {
+        return;
+    }
+    
+    
+    await mongoose.connect(cloudURI, {
+        serverSelectionTimeoutMS: 5000,
+        bufferCommands: false
+    });
+}
 
 const ResultSchema = new mongoose.Schema({
     name: String,
@@ -24,29 +32,34 @@ const ResultSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-const Result = mongoose.model('Result', ResultSchema);
+// Защита от повторной инициализации модели в Serverless-среде
+const Result = mongoose.models.Result || mongoose.model('Result', ResultSchema);
 
 const correctAnswers = {
     1: 2, 2: 3, 3: 0, 4: 1, 5: 1, 6: 0, 7: 1, 8: 0, 9: 1, 10: 2,
     11: 1, 12: 7, 13: 1, 14: 0, 15: 3, 16: 5, 17: 1, 18: 4, 19: 4, 20: 1
 };
 
-// Эндпоинт мгновенной записи чистых контактов при входе
+// 1. МГНОВЕННЫЙ СБОР КОНТАКТОВ НА ПЕРВОЙ СТРАНИЦЕ
 app.post('/api/register-candidate', async (req, res) => {
     try {
+        await connectDB();
+        
         const { name, email, phone } = req.body;
         const newLead = new Result({ name, email, phone, detailedAnswers: [], score: 0 });
         await newLead.save();
+        
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        console.error("Ошибка при сохранении лида:", error);
+        return res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
 });
 
-// Твой проверенный эндпоинт отправки ответов в отдельную запись
 app.post('/api/submit-quiz', async (req, res) => {
     try {
+        await connectDB();
+        
         const { name, email, phone, answers } = req.body;
         let detailedAnswers = [];
         let score = 0;
@@ -68,10 +81,11 @@ app.post('/api/submit-quiz', async (req, res) => {
 
         const newResult = new Result({ name, email, phone, detailedAnswers, score });
         await newResult.save();
+        
         return res.status(200).json({ success: true });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        console.error("Ошибка при финальной отправке:", error);
+        return res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
 });
 
