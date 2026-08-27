@@ -19,10 +19,10 @@ const ResultSchema = new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
-    detailedAnswers: { type: Array, default: [] }, 
-    score: { type: Number, default: 0 },          
+    detailedAnswers: Array, 
+    score: Number,          
     createdAt: { type: Date, default: Date.now }
-}, { strict: false });
+});
 
 const Result = mongoose.model('Result', ResultSchema);
 
@@ -31,32 +31,30 @@ const correctAnswers = {
     11: 1, 12: 7, 13: 1, 14: 0, 15: 3, 16: 5, 17: 1, 18: 4, 19: 4, 20: 1
 };
 
-// 1. ЭНДПОИНТ ДЛЯ МГНОВЕННОГО СОХРАНЕНИЯ КОНТАКТОВ
+// 1. МГНОВЕННЫЙ СБОР КОНТАКТОВ НА ПЕРВОЙ СТРАНИЦЕ
 app.post('/api/register-candidate', async (req, res) => {
     try {
         const { name, email, phone } = req.body;
         
-        // Создаем запись только с контактами — без лишних полей, чтобы не вызывать ошибку базы
-        const newResult = new Result({ name, email, phone });
-        await newResult.save();
+        const newLead = new Result({ name, email, phone, detailedAnswers: [], score: 0 });
+        await newLead.save();
         
-        // Возвращаем фронтенду текстовый ID созданной записи
-        return res.status(200).json({ success: true, id: newResult._id.toString() });
+        return res.status(200).json({ success: true, id: "dummy_id" });
     } catch (error) {
-        console.error("Ошибка сохранения лида:", error);
-        return res.status(500).json({ error: "Internal Server Error", message: error.message });
+        console.error("Ошибка при сохранении лида:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 app.post('/api/submit-quiz', async (req, res) => {
     try {
-        const { candidateId, answers } = req.body;
+        const { name, email, phone, answers } = req.body;
         let detailedAnswers = [];
         let score = 0;
 
         for (let qId in correctAnswers) {
             const numId = parseInt(qId);
-            const userAnswer = answers[numId];
+            const userAnswer = answers ? answers[numId] : undefined;
             const isCorrect = userAnswer === correctAnswers[numId];
             if (isCorrect) score++;
 
@@ -69,33 +67,20 @@ app.post('/api/submit-quiz', async (req, res) => {
             });
         }
 
-        // Если с фронтенда пришел ID кандидата — обновляем его запись
-        if (candidateId) {
-            const objectId = new mongoose.Types.ObjectId(candidateId);
-            
-            await Result.findByIdAndUpdate(objectId, {
-                $set: {
-                    detailedAnswers: detailedAnswers,
-                    score: score
-                }
-            });
-            return res.status(200).json({ success: true });
-        } 
-        
-        // Резервный случай: если ID потерялся, создаем новую запись
-        const fallbackResult = new Result({ 
-            name: "Unknown (Late Submit)", 
-            email: "-", 
-            phone: "-", 
+        const newResult = new Result({ 
+            name: name || "Unknown", 
+            email: email || "-", 
+            phone: phone || "-", 
             detailedAnswers, 
             score 
         });
-        await fallbackResult.save();
+        
+        await newResult.save();
         return res.status(200).json({ success: true });
 
     } catch (error) {
         console.error("Ошибка при финальной отправке:", error);
-        return res.status(500).json({ error: "Internal Server Error", message: error.message });
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -107,7 +92,6 @@ app.get('*', (req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => console.log(`Сервер запущен`));
 }
